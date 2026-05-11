@@ -1,6 +1,6 @@
 import {
   auth
-} from "./firebase-config.js";
+} from "../js/firebase-config.js";
 
 import {
   PhoneAuthProvider,
