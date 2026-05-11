@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Dashboard - Diab Muaazir</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="app-header">
+
+  <div class="left-icons">
+    <div class="hamburger" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    </div>
+<div class="header-logo">
+  <img src="../images/diab muaazir.svg" alt="Logo">
+</div>
+
+<div class="right-icons">
+<div class="icon-btn notification-wrapper" id="notificationBtn" onclick="goToNotifications()">
+    <img src="../images/notifications.svg">
+  <span id="notificationBadge" class="notification-badge"></span>
+</div>
+
+  <div class="icon-btn">
+    <img src="../images/location.svg" alt="Location">
+  </div>
+  <div class="lang-switcher">
+  <img src="../images/language.svg" id="langToggle" class="lang-icon">
+
+  <div class="lang-dropdown" id="langDropdown">
+<div class="lang-option active" data-lang="en">🇬🇧 English</div>
+<div class="lang-option" data-lang="ar">🇸🇦 العربية</div>
+  </div>
+</div>
+</div>
+
+</header>
+<!-- Overlay -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- Side Menu -->
+<nav class="side-menu" id="sideMenu">
+  <h3 class="menu-title">Menu</h3>
+<div class="menu-user">
+  <div class="user-avatar">
+    <img id="userProfilePic" src="../images/profile icon.png" alt="Profile">
+  </div>
+
+  <div class="user-details">
+    <div class="user-name" id="menuUserName"></div>
+    <div class="user-age" id="menuUserAge"></div>
+    <div class="user-email" id="menuUserEmail"></div>
+  </div>
+</div>
+
+ <ul>
+  <li>
+    <a href="patient.html">
+      <img src="../images/pt-dashboard.svg" alt="Dashboard Icon" class="menu-icon">
+      Dashboard
+    </a>
+  </li>
+
+  <li>
+    <a href="profile.html">
+      <img src="../images/profile.png" alt="Profile Icon" class="menu-icon">
+      Profile
+    </a>
+  </li>
+
+  <li>
+    <a href="sugar-history.html">
+      <img src="../images/sugar-chart.svg" alt="History Icon" class="menu-icon">
+      Sugar Level History
+    </a>
+  </li>
+
+  <li>
+    <a href="settings.html">
+      <img src="../images/gear.svg" alt="Settings Icon" class="menu-icon">
+      Settings
+    </a>
+  </li>
+
+  <li>
+    <a href="../feedback.html">
+      <img src="../images/feedback.png" alt="Feedback Icon" class="menu-icon">
+      Feedback
+    </a>
+  </li>
+
+  <li>
+    <a href="../about.html">
+      <img src="../images/info.svg" alt="About Icon" class="menu-icon">
+      About Us
+    </a>
+  </li>
+
+  <li>
+    <a href="../contact.html">
+      <img src="../images/phone.svg" alt="Contact Icon" class="menu-icon">
+      Contact Us
+    </a>
+  </li>
+
+  <li>
+    <a href="../faq.html">
+      <img src="../images/frequently asked questions.png" alt="FAQ Icon" class="menu-icon">
+      FAQ
+    </a>
+  </li>
+
+  <li>
+  <a id="logoutBtn">Logout</a>
+</li>
+</ul>
+
+</nav>
+
+  <div class="dashboard-container">
+
+    <header class="dashboard-header">
+      <h2>Patient Dashboard</h2>
+    </header>
+
+    <div class="dashboard-grid">
+
+      <!-- Sugar Level -->
+      <div class="card" id="sugarCard">
+        <h3>Sugar Level</h3>
+        <div class="metric-value" id="sugarValue">--</div>
+        <p class="status-message" id="sugarStatus"></p>
+      </div>
+
+      <!-- Insulin Volume -->
+      <div class="card">
+        <h3>Insulin Volume</h3>
+        <div class="metric-value" id="insulinValue">--</div>
+        <div class="progress-bar">
+          <div class="progress" id="insulinBar"></div>
+        </div>
+      </div>
+
+      <!-- Battery Level -->
+      <div class="card">
+        <h3>Battery Level</h3>
+        <div class="metric-value" id="batteryValue">--</div>
+        <div class="progress-bar">
+          <div class="progress" id="batteryBar"></div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+  <div class="card action-card">
+  <h3>Find My Pump</h3>
+</div>
+
+
+<a href="carbcalc.html" class="card action-card">
+  <h3>Calculate My Carbs</h3>
+</a>
+
+
+<a href="contact-doctor.html"   class="card action-card">     
+<h3>Contact My Doctor</h3>
+</a>
+
+    </div>
+
+    <!-- Alert Section -->
+    <div class="alert-box" id="alertBox"></div>
+
+  </div>
+
+<div class="footer-links dashboard-footer">
+  <a href="../about.html">
+    <img src="../images/info.svg" alt="About us" class="icon">
+    About us
+  </a>
+  |
+  <a href="../contact.html">
+    <img src="../images/phone.svg" alt="Contact us" class="icon">
+    Contact us
+  </a>
+</div>
+
+  <script type="module" src="../js/script.js">
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+if(!user){
+  window.location.href = "../login.html";
+
+  function logout(){
+  localStorage.removeItem("currentUser");
+  window.location.href = "../login.html";
+}
+
+function goToNotifications(){
+  window.location.href = "critical patient.html";
+}
+}</script>
+
+</body>
+</html>

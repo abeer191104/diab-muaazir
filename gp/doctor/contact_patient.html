@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact Patient</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#fff;}
+
+.topbar{
+height:60px;background:#effcff;
+display:flex;justify-content:space-between;
+align-items:center;padding:0 20px;position:relative;
+}
+
+.header-logo{
+position:absolute;left:50%;
+transform:translateX(-50%);
+}
+.header-logo img{height:40px;}
+
+.menu{font-size:28px;cursor:pointer;}
+
+.top-icons{display:flex;gap:20px;align-items:center;}
+.top-icons img{width:24px;cursor:pointer;}
+
+/* 🔴 BADGE */
+.notif-wrapper{
+position:relative;
+display:inline-block;
+}
+.notif-badge{
+position:absolute;
+top:-6px;
+right:-6px;
+background:red;
+color:white;
+font-size:11px;
+min-width:16px;
+height:16px;
+padding:0 4px;
+border-radius:10px;
+display:none;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.lang-switcher{position:relative;}
+.lang-dropdown{
+position:absolute;top:35px;right:0;
+background:#fff;border-radius:8px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+display:none;
+}
+.lang-dropdown.active{display:block;}
+.lang-option{padding:10px;cursor:pointer;}
+
+.sidebar{
+position:fixed;top:60px;width:230px;height:100%;
+background:#effcff;padding:15px;transition:0.3s;
+}
+
+.profile-header{
+display:flex;align-items:center;gap:10px;margin-bottom:15px;
+}
+.profile-header img{width:45px;}
+
+.profile-info{font-size:14px;color:#2c5d7c;}
+
+.menu-item{
+display:flex;align-items:center;gap:10px;
+margin-top:15px;cursor:pointer;color:#2c5d7c;
+}
+.menu-item img{width:20px;}
+
+.title{text-align:center;margin-top:20px;font-size:22px;font-weight:bold;color:#2c5d7c;}
+
+.chat-box{
+width:400px;margin:20px auto;background:#effcff;
+border-radius:10px;display:flex;flex-direction:column;height:500px;
+}
+
+.chat-header{
+padding:10px;display:flex;align-items:center;
+gap:10px;font-weight:bold;color:#2c5d7c;
+}
+.chat-header img{width:35px;}
+
+.messages{flex:1;overflow-y:auto;padding:10px;}
+
+.msg{
+padding:10px 14px;border-radius:15px;margin:8px 0;
+max-width:70%;font-size:14px;
+}
+
+.msg-right{background:#5a7f9d;color:white;margin-left:auto;}
+.msg-left{background:#6ea3b5;color:white;}
+
+.input-area{display:flex;padding:10px;gap:10px;}
+.input-area input{
+flex:1;padding:10px;border-radius:20px;border:1px solid #ccc;
+}
+.send-btn{width:35px;cursor:pointer;}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div class="menu" onclick="toggleSidebar()">☰</div>
+
+<div class="header-logo">
+<img src="../images/diab muaazir.svg">
+</div>
+
+<div class="top-icons">
+<img src="../images/location.svg">
+
+<div class="notif-wrapper">
+<img src="../images/notifications.svg" onclick="goToNotifications()">
+<span id="notifBadge" class="notif-badge"></span>
+</div>
+
+<div class="lang-switcher">
+<img src="../images/language.svg" id="langToggle">
+
+<div class="lang-dropdown" id="langDropdown">
+<div class="lang-option" data-lang="en">English</div>
+<div class="lang-option" data-lang="ar">العربية</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+<div class="profile-header">
+<img src="../images/profile icon.png">
+<div class="profile-info" id="profileInfo"></div>
+</div>
+
+<div class="menu-item" onclick="goTo('profile.html')">
+<img src="../images/profile.png"><span id="navProfile"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('patients.html')">
+<img src="../images/patients.png"><span id="navPatients"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('calendar.html')">
+<img src="../images/calendar.png"><span id="navCalendar"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('settings.html')">
+<img src="../images/gear.svg"><span id="navSettings"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../feedback.html')">
+<img src="../images/feedback.png"><span id="navFeedback"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../about.html')">
+<img src="../images/info.svg"><span id="navAbout"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../contact.html')">
+<img src="../images/phone.svg"><span id="navContact"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../faq.html')">
+<img src="../images/frequently asked questions.png"><span id="navFaq"></span>
+</div>
+
+<div class="menu-item" onclick="logout()">
+  <span id="navLogout">Logout</span>
+</div>
+</div>
+
+<div class="title" id="title"></div>
+
+<div class="chat-box">
+
+<div class="chat-header">
+<img src="../images/profile icon.png">
+<span id="patientName"></span>
+</div>
+
+<div class="messages" id="messages"></div>
+
+<div class="input-area">
+<input type="text" id="messageInput">
+<img src="../images/send arrow.png" class="send-btn" onclick="sendMessage()">
+</div>
+
+</div>
+
+<script type="module">
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+  getDoc,
+  onSnapshot,
+  serverTimestamp,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { db, auth } from "../js/firebase-config.js";
+const user = JSON.parse(localStorage.getItem("currentUser"));
+
+if (!user) {
+  window.location.href = "../index.html";
+}
+/* 🔴 BADGE (التعديل الوحيد) */
+async function updateNotificationBadge(){
+
+  const badge = document.getElementById("notifBadge");
+
+  try {
+    const snapshot = await getDocs(collection(db, "Patient"));
+
+    let count = 0;
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+
+      if (data.status === "high" || data.status === "low") {
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      badge.style.display = "flex";
+      badge.textContent = count > 9 ? "9+" : count;
+    } else {
+      badge.style.display = "none";
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+setInterval(updateNotificationBadge,5000);
+updateNotificationBadge();
+
+/* اللغة */
+let lang = localStorage.getItem("lang") || "en";
+
+/* جلب المريض */
+let selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
+
+let patientName = "Patient";
+
+if (selectedPatient) {
+  const first = selectedPatient.firstName || "";
+  const last = selectedPatient.lastName || "";
+  patientName = (first + " " + last).trim() || "Patient";
+}
+
+/* نصوص */
+const pageText = {
+en:{title:"Contact Patient",placeholder:"Type your message..."},
+ar:{title:"التواصل مع المريض الحرج",placeholder:"اكتب رسالتك..."}
+};
+
+const menuText = {
+en:{profile:"Profile",patients:"Patients",calendar:"Calendar",settings:"Settings",feedback:"Feedback",about:"About us",contact:"Contact us",faq:"FAQ",logout:"logout"},
+ar:{profile:"الملف الشخصي",patients:"المرضى",calendar:"التقويم",settings:"الإعدادات",feedback:"الملاحظات",about:"من نحن",contact:"تواصل معنا",faq:"الأسئلة الشائعة",logout:"تسجيل الخروج"}
+};
+
+/* APPLY */
+title.innerText = pageText[lang].title;
+let patientNameEl = document.getElementById("patientName");
+patientNameEl.innerText = patientName;
+document.getElementById("messageInput").placeholder = pageText[lang].placeholder;
+
+navProfile.innerText=menuText[lang].profile;
+navPatients.innerText=menuText[lang].patients;
+navCalendar.innerText = menuText[lang].calendar;
+navSettings.innerText=menuText[lang].settings;
+navFeedback.innerText=menuText[lang].feedback;
+navAbout.innerText=menuText[lang].about;
+navContact.innerText=menuText[lang].contact;
+navFaq.innerText=menuText[lang].faq;
+document.getElementById("navLogout").innerText=lang === "ar" ? "تسجيل الخروج" : "Logout";
+
+
+/* اتجاه */
+let sidebar=document.getElementById("sidebar");
+
+if(lang==="ar"){
+document.body.style.direction="rtl";
+sidebar.style.right="-250px";
+}else{
+sidebar.style.left="-250px";
+}
+
+/* MENU */
+function toggleSidebar(){
+if(lang==="ar"){
+sidebar.style.right = sidebar.style.right==="0px"?"-250px":"0";
+}else{
+sidebar.style.left = sidebar.style.left==="0px"?"-250px":"0";
+}
+}
+
+function goTo(p) {
+  if (lang === "ar") {
+    if (p === "../feedback.html") p = "../feedback-ar.html";
+    if (p === "../about.html") p = "../about-us-ar.html";
+    if (p === "../contact.html") p = "../contact-us-ar.html";
+    if (p === "../faq.html") p = "../faq-ar.html";
+  }
+
+  window.location.href = p;
+}
+
+async function logout() {
+  try {
+    await signOut(auth); // 🔥 Firebase logout
+
+    // 🔥 clear app session
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("selectedPatient");
+
+    // optional: clear everything
+    // localStorage.clear();
+
+    // 🔥 redirect to login page
+    window.location.href = "../index.html";
+
+  } catch (error) {
+    console.error(error);
+    alert("Logout failed");
+  }
+}
+
+async function loadDoctorProfile() {
+
+  const savedUser = JSON.parse(localStorage.getItem("currentUser"));
+  localStorage.setItem("selectedDoctorId", savedUser.uid);
+  if (!savedUser || !savedUser.uid) return;
+
+  try {
+    const doctorRef = doc(db, "Doctor", savedUser.uid);
+    const doctorSnap = await getDoc(doctorRef);
+
+    if (!doctorSnap.exists()) return;
+
+const data = doctorSnap.data();
+
+
+    document.getElementById("profileInfo").innerHTML = `
+      <b>${data.firstName || ""} ${data.lastName || ""}</b><br>
+      ${lang === "ar" ? "العمر" : "Age"}: ${data.age || "--"}<br>
+      ${data.email || ""}
+    `;
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+function goToNotifications(){
+window.location.href="critical patient.html";
+}
+
+/* LANGUAGE */
+langToggle.onclick=(e)=>{
+e.stopPropagation();
+langDropdown.classList.toggle("active");
+};
+
+document.querySelectorAll(".lang-option").forEach(opt=>{
+opt.onclick=()=>{
+localStorage.setItem("lang",opt.dataset.lang);
+location.reload();
+};
+});
+
+document.onclick=()=>langDropdown.classList.remove("active");
+
+/* CHAT */
+async function sendMessage(){
+let input = document.getElementById("messageInput");
+let text = input.value.trim();
+if(!text) return;
+
+let box = document.getElementById("messages");
+
+/* show message instantly */
+let user = document.createElement("div");
+user.className = "msg msg-right";
+user.innerText = text;
+box.appendChild(user);
+
+input.value = "";
+box.scrollTop = box.scrollHeight;
+
+/* 🔥 SAVE TO FIREBASE */
+const savedUser = JSON.parse(localStorage.getItem("currentUser"));
+localStorage.setItem("selectedDoctorId", savedUser.uid);
+await addDoc(collection(db, "Messages"), {
+  doctorId: savedUser.uid,
+  patientId: selectedPatient.id,
+  patientName: patientName,
+  text: text,
+  sender: "doctor",
+  time: new Date().toISOString()
+});
+}
+
+function loadMessages() {
+
+  const savedUser =
+    JSON.parse(localStorage.getItem("currentUser"));
+
+  if (!savedUser || !selectedPatient) return;
+
+const q = query(
+  collection(db, "Messages"),
+  orderBy("time", "asc")
+);
+
+  onSnapshot(q, (snapshot) => {
+
+    const box = document.getElementById("messages");
+
+    box.innerHTML = "";
+
+    snapshot.forEach((docSnap) => {
+
+      const data = docSnap.data();
+
+      if (
+        data.doctorId !== savedUser.uid ||
+        data.patientId !== selectedPatient.id
+      ) {
+        return;
+      }
+
+      let msg = document.createElement("div");
+
+      msg.className =
+        data.sender === "doctor"
+          ? "msg msg-right"
+          : "msg msg-left";
+
+      msg.innerText = data.text;
+
+      box.appendChild(msg);
+    });
+
+    box.scrollTop = box.scrollHeight;
+  });
+}
+
+loadMessages();
+loadDoctorProfile();
+window.sendMessage = sendMessage;
+window.toggleSidebar = toggleSidebar;
+window.goTo = goTo;
+window.goToNotifications = goToNotifications;
+window.logout = logout;
+</script>
+
+</body>
+</html>

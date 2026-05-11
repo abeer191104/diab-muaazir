@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diab Muaazir</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="landing-page">
+<div class="lang-switcher landing-lang">
+  <img src="images/language.svg" id="langToggle" class="lang-icon">
+
+  <div class="lang-dropdown" id="langDropdown">
+    <div class="lang-option" data-lang="en">🇬🇧 English</div>
+    <div class="lang-option active" data-lang="ar">🇸🇦 العربية</div>
+  </div>
+</div>
+
+  <div class="landing-center">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="images/diab muaazir.svg" alt="Diab Muaazir Logo">
+    </div>
+
+    <!-- Buttons -->
+    <div class="main-buttons">
+      <a href="register-ar.html" class="btn">التسجيل</a>
+      <a href="login-ar.html" class="btn">تسجيل الدخول</a>
+    </div>
+  </div>
+
+  <!-- Footer Navigation -->
+  <div class="footer-links">
+    <a href="about-us-ar.html">
+      <img src="images/info.svg" alt="About us" class="icon">
+حول
+    </a> |
+    <a href="contact-us-ar.html">
+      <img src="images/phone.svg" alt="Contact us" class="icon">
+      تواصل 
+    </a>
+  </div>
+<script>
+const langToggle = document.getElementById("langToggle");
+const langDropdown = document.getElementById("langDropdown");
+
+if (langToggle && langDropdown) {
+
+  langToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    langDropdown.classList.toggle("active");
+  });
+
+  document.querySelectorAll(".lang-option").forEach(option => {
+    option.addEventListener("click", () => {
+      const lang = option.dataset.lang;
+
+      if (lang === "en") {
+        window.location.href = "index.html";   // English landing
+      } else {
+        window.location.href = "index-ar.html"; // Arabic landing
+      }
+    });
+  });
+
+  document.addEventListener("click", () => {
+    langDropdown.classList.remove("active");
+  });
+}
+</script>
+</body>
+</html>

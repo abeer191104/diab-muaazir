@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Critical Patients</title>
+
+<style>
+body{margin:0;font-family:Arial;}
+
+.topbar{
+height:60px;background:#effcff;
+display:flex;align-items:center;
+padding:0 20px;position:relative;
+}
+
+.header-logo{
+position:absolute;left:50%;
+transform:translateX(-50%);
+}
+.header-logo img{height:40px;}
+
+.menu{font-size:28px;cursor:pointer;}
+
+.top-icons{
+display:flex;gap:15px;align-items:center;
+}
+.top-icons img{width:22px;cursor:pointer;}
+
+.lang-switcher{position:relative;}
+
+.lang-box{
+position:absolute;
+top:35px;
+background:#fff;
+border:1px solid #ccc;
+display:none;
+border-radius:6px;
+z-index:1000;
+}
+
+.lang-box div{padding:6px;cursor:pointer;}
+
+.sidebar{
+position:fixed;top:60px;width:230px;height:100%;
+background:#effcff;padding:15px;
+transition:0.3s;
+}
+
+.profile-header{display:flex;gap:10px;align-items:center;}
+.profile-header img{width:35px;height:35px;border-radius:50%;}
+
+.menu-item{display:flex;gap:10px;margin-top:15px;cursor:pointer;}
+.menu-item img{width:20px;}
+
+.container{padding:90px 20px;}
+
+.card{
+background:#effcff;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+color:#2c5d7c;
+margin-bottom:10px;
+}
+
+.info{
+color:#2c5d7c;
+margin-bottom:10px;
+}
+
+.btn{
+display:flex;
+align-items:center;
+gap:10px;
+background:#5a9db5;
+color:#fff;
+padding:10px;
+border-radius:20px;
+width:230px;
+margin-top:8px;
+cursor:pointer;
+}
+
+.btn img{width:20px;}
+
+.line{
+height:1px;
+background:#ccc;
+margin:20px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div class="menu" onclick="toggleSidebar()">☰</div>
+
+<div class="header-logo">
+<img src="../images/diab muaazir.svg">
+</div>
+
+<div class="top-icons" id="icons">
+<img src="../images/location.svg">
+<img src="../images/notifications.svg">
+
+<div class="lang-switcher">
+<img src="../images/language.svg" onclick="toggleLang()">
+
+<div class="lang-box" id="langBox">
+<div onclick="setLang('en')">English</div>
+<div onclick="setLang('ar')">العربية</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+<div class="profile-header">
+<img src="../images/profile icon.png">
+<div id="profileInfo"></div>
+</div>
+
+<div class="menu-item" onclick="goTo('profile.html')">
+<img src="../images/profile.png"><span id="nav1"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('patients.html')">
+<img src="../images/patients.png"><span id="nav2"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('calendar.html')">
+<img src="../images/calendar.png"><span id="nav8"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('settings.html')">
+<img src="../images/gear.svg"><span id="nav3"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../feedback.html')">
+<img src="../images/feedback.png"><span id="nav4"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../about.html')">
+<img src="../images/info.svg"><span id="nav5"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../contact.html')">
+<img src="../images/phone.svg"><span id="nav6"></span>
+</div>
+
+<div class="menu-item" onclick="goTo('../faq.html')">
+<img src="../images/frequently asked questions.png"><span id="nav7"></span>
+</div>
+
+<div class="menu-item" onclick="logout()">
+  <span id="navLogout">Logout</span>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="container" id="box"></div>
+
+<script type="module">
+
+let lang = localStorage.getItem("lang") || "en";
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { db,auth } from "../js/firebase-config.js";
+
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const user = JSON.parse(localStorage.getItem("currentUser"));
+
+if (!user) {
+  window.location.href = "../index.html";
+}
+/* TEXT */
+const t={
+en:{
+profile:"Profile",
+patients:"Patients",
+calendar:"Calendar",
+settings:"Settings",
+feedback:"Feedback",
+about:"About us",
+contact:"Contact us",
+faq:"FAQ",
+logout:"logout",
+status:"Status",
+contactBtn:"Contact the patient",
+locationBtn:"Locate patient",
+title:"Critical Patient"
+},
+ar:{
+profile:"الملف الشخصي",
+patients:"المرضى",
+calendar:"التقويم",
+settings:"الإعدادات",
+feedback:"الملاحظات",
+about:"من نحن",
+contact:"تواصل معنا",
+faq:"الأسئلة الشائعة",
+logout:"تسجيل الخروج",
+status:"الحالة",
+contactBtn:"التواصل مع المريض",
+locationBtn:"تحديد موقع المريض",
+title:"مريض في حالة حرجة"
+}
+};
+
+/* APPLY */
+const nav1 = document.getElementById("nav1");
+const nav2 = document.getElementById("nav2");
+const nav3 = document.getElementById("nav3");
+const nav4 = document.getElementById("nav4");
+const nav5 = document.getElementById("nav5");
+const nav6 = document.getElementById("nav6");
+const nav7 = document.getElementById("nav7");
+const nav8 = document.getElementById("nav8");
+const profileInfo = document.getElementById("profileInfo");
+document.getElementById("navLogout").innerText=lang === "ar" ? "تسجيل الخروج" : "Logout";
+
+nav1.innerText = t[lang].profile;
+nav2.innerText = t[lang].patients;
+nav3.innerText = t[lang].settings;
+nav4.innerText = t[lang].feedback;
+nav5.innerText = t[lang].about;
+nav6.innerText = t[lang].contact;
+nav7.innerText = t[lang].faq;
+nav8.innerText = t[lang].calendar;
+
+async function logout() {
+  try {
+    await signOut(auth); // 🔥 Firebase logout
+
+    // 🔥 clear app session
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("selectedPatient");
+
+    // optional: clear everything
+    // localStorage.clear();
+
+    // 🔥 redirect to login page
+    window.location.href = "../index.html";
+
+  } catch (error) {
+    console.error(error);
+    alert("Logout failed");
+  }
+}
+
+async function loadDoctorProfile() {
+
+  const savedUser = JSON.parse(localStorage.getItem("currentUser"));
+  localStorage.setItem("selectedDoctorId", savedUser.uid);
+  if (!savedUser || !savedUser.uid) return;
+
+  try {
+    const doctorRef = doc(db, "Doctor", savedUser.uid);
+    const doctorSnap = await getDoc(doctorRef);
+
+    if (!doctorSnap.exists()) return;
+
+    const data = doctorSnap.data();
+
+    document.getElementById("profileInfo").innerHTML = `
+      <b>${data.firstName || ""} ${data.lastName || ""}</b><br>
+      ${lang === "ar" ? "العمر" : "Age"}: ${data.age || "--"}<br>
+      ${data.email || ""}
+    `;
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+loadDoctorProfile();
+/* SIDEBAR */
+let sidebar=document.getElementById("sidebar");
+let icons=document.getElementById("icons");
+let langBox=document.getElementById("langBox");
+
+if(lang==="ar"){
+document.body.style.direction="rtl";
+sidebar.style.right="-250px";
+icons.style.marginRight="auto";
+langBox.style.right="0";
+}else{
+sidebar.style.left="-250px";
+icons.style.marginLeft="auto";
+langBox.style.left="0";
+}
+
+function toggleSidebar(){
+if(lang==="ar"){
+sidebar.style.right = sidebar.style.right==="0px"?"-250px":"0";
+}else{
+sidebar.style.left = sidebar.style.left==="0px"?"-250px":"0";
+}
+}
+
+function toggleLang(){
+let b=document.getElementById("langBox");
+b.style.display = b.style.display==="block"?"none":"block";
+}
+
+function setLang(l){
+localStorage.setItem("lang",l);
+location.reload();
+}
+
+/* 🔥 البيانات من صفحة المرضى */
+async function getCriticalPatients(){
+
+  let result = [];
+
+  try {
+    const snapshot = await getDocs(collection(db, "Patient"));
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+
+      // 🔥 attach Firebase ID
+      const patient = {
+        id: docSnap.id,
+        ...data
+      };
+
+if (data.status === "high" || data.status === "low") {
+  result.push(patient);
+}
+      });
+    
+
+  } catch (error) {
+    console.error(error);
+  }
+
+  return result;
+}
+
+/* RENDER */
+async function render(){
+
+let alerts = await getCriticalPatients();
+let box=document.getElementById("box");
+box.innerHTML="";
+
+if(alerts.length === 0){
+box.innerHTML = lang==="ar"
+  ? "<p style='text-align:center'>لا يوجد مرضى حرجين</p>"
+  : "<p style='text-align:center'>No critical patients</p>";
+  return;
+}
+
+alerts.forEach(a => {
+
+  let name = (a.firstName || "") + " " + (a.lastName || "");
+  name = name.trim() || "Patient";
+
+  let status =
+    lang==="ar"
+      ? (a.status==="high"?"مرتفع":a.status==="low"?"منخفض":"طبيعي")
+      : (a.status==="high"?"High":a.status==="low"?"Low":"Normal");
+
+  // ✅ CREATE div FIRST
+  let div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <div class="title">${t[lang].title}</div>
+    <div class="info">
+      <b>${name}</b><br>
+      ${t[lang].age}: ${a.age}<br>
+      ${t[lang].status}: ${status}
+    </div>
+  `;
+
+  // ✅ THEN create button
+  let contactBtn = document.createElement("div");
+  contactBtn.className = "btn";
+
+  contactBtn.innerHTML = `
+    <img src="../images/contact the patient.png">
+    ${t[lang].contactBtn}
+  `;
+
+  contactBtn.onclick = () => contactPatient(a);
+
+  // ✅ NOW safe to append
+  div.appendChild(contactBtn);
+
+  // ✅ add to page
+  box.appendChild(div);
+
+  let line = document.createElement("div");
+  line.className = "line";
+  box.appendChild(line);
+
+});
+}
+render();
+setInterval(render, 5000);
+
+/* 🔗 ربط الشات */
+function contactPatient(patient){
+
+  localStorage.setItem("selectedPatient", JSON.stringify(patient));
+
+  window.location.href = "contact_patient.html";
+}
+
+/* 🔗 NAVIGATION */
+function goTo(page) {
+  if (lang === "ar") {
+    if (page === "../feedback.html") page = "../feedback-ar.html";
+    if (page === "../about.html") page = "../about-us-ar.html";
+    if (page === "../contact.html") page = "../contact-us-ar.html";
+    if (page === "../faq.html") page = "../faq-ar.html";
+  }
+
+  window.location.href = page;
+}
+window.contactPatient = contactPatient;
+window.toggleSidebar = toggleSidebar;
+window.goTo = goTo;
+window.toggleLang = toggleLang;
+window.setLang = setLang;
+window.logout = logout;
+
+</script>
+
+</body>
+</html>
