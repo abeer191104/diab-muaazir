@@ -1,67 +1,113 @@
+import {
+  auth
+} from "./firebase-config.js";
+
+import {
+  PhoneAuthProvider,
+  signInWithCredential
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 const otpInput = document.getElementById("otpInput");
 const verifyBtn = document.getElementById("verifyBtn");
 const errorEl = document.getElementById("error");
-const timerEl = document.getElementById("timer");
 
-// 🔥 Load stored data
-const storedOtp = localStorage.getItem("login_otp");
-const expiry = parseInt(localStorage.getItem("login_otp_expiry"));
-const tempUser = JSON.parse(localStorage.getItem("tempUser"));
+// ===============================
+// LOAD STORED DATA
+// ===============================
 
-// 🚫 Safety checks
-if (!storedOtp || !expiry || !tempUser) {
+const tempUser =
+  JSON.parse(localStorage.getItem("tempUser"));
+
+const verificationId =
+  sessionStorage.getItem("verificationId");
+
+// ===============================
+// SAFETY CHECKS
+// ===============================
+
+if (!tempUser || !verificationId) {
+
   window.location.href = "login.html";
+
 }
 
 // ===============================
-// ⏳ TIMER
+// VERIFY OTP
 // ===============================
-function updateTimer() {
-  const remaining = expiry - Date.now();
 
-  if (remaining <= 0) {
-    timerEl.textContent = "OTP expired";
-    localStorage.removeItem("login_otp");
+verifyBtn.addEventListener("click", async () => {
+
+  errorEl.textContent = "";
+
+  const code = otpInput.value.trim();
+
+  // empty input
+  if (!code) {
+
+    errorEl.textContent =
+      "Please enter the verification code";
+
     return;
+
   }
 
-  const seconds = Math.floor(remaining / 1000);
-  timerEl.textContent = "Expires in: " + seconds + "s";
-}
+  try {
 
-setInterval(updateTimer, 1000);
-updateTimer();
+    // create credential
+    const credential =
+      PhoneAuthProvider.credential(
+        verificationId,
+        code
+      );
 
-// ===============================
-// ✅ VERIFY OTP
-// ===============================
-verifyBtn.addEventListener("click", () => {
-  const entered = otpInput.value.trim();
+    // verify code
+    await signInWithCredential(
+      auth,
+      credential
+    );
 
-  // expired check
-  if (Date.now() > expiry) {
-    errorEl.textContent = "OTP expired. Please login again.";
-    return;
+    // promote temp user → current user
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(tempUser)
+    );
+
+    // cleanup
+    localStorage.removeItem("tempUser");
+
+    sessionStorage.removeItem("verificationId");
+
+    // redirect by role
+    if (tempUser.role === "Doctor") {
+
+      window.location.href =
+        "doctor/patients.html";
+
+    }
+
+    else if (tempUser.role === "Parent") {
+
+      window.location.href =
+        "patient/patient.html";
+
+    }
+
+    else {
+
+      window.location.href =
+        "patient/patient.html";
+
+    }
+
   }
 
-  // match check
-  if (entered !== storedOtp) {
-    errorEl.textContent = "Incorrect OTP";
-    return;
+  catch (err) {
+
+    console.error(err);
+
+    errorEl.textContent =
+      "Invalid or expired verification code";
+
   }
 
-  // ✅ SUCCESS → promote tempUser → currentUser
-  localStorage.setItem("currentUser", JSON.stringify(tempUser));
-
-  // cleanup
-  localStorage.removeItem("tempUser");
-  localStorage.removeItem("login_otp");
-  localStorage.removeItem("login_otp_expiry");
-
-  // redirect by role
-  if (tempUser.role === "Doctor") {
-    window.location.href = "doctor/patients.html";
-  } else {
-    window.location.href = "patient/patient.html";
-  }
 });
