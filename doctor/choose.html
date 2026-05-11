@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Select Role</title>
+
+<style>
+
+body{
+    margin:0;
+    height:100vh;
+    background-color:#effcff;
+    font-family: Arial, sans-serif;
+    position:relative;
+}
+
+/* 🔷 HEADER */
+.topbar{
+    height:60px;
+    background:#effcff;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding:0 20px;
+    position:relative;
+}
+
+/* 🔥 LOGO */
+.header-logo{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.header-logo img{
+    height:40px;
+}
+
+/* 🌐 LANGUAGE */
+.lang-switcher{
+    position:relative;
+}
+
+.lang-icon{
+    width:24px;
+    cursor:pointer;
+}
+
+.lang-dropdown{
+    position:absolute;
+    top:35px;
+    right:0;
+    background:white;
+    border-radius:8px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    display:none;
+}
+
+.lang-dropdown.active{
+    display:block;
+}
+
+.lang-option{
+    padding:10px 15px;
+    cursor:pointer;
+}
+
+.lang-option:hover{
+    background:#f2f2f2;
+}
+
+/* 🔷 ROLES */
+.roles{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    display:flex;
+    gap:40px;
+}
+
+.role{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 22px;
+    border:3px solid #2c5d7c;
+    border-radius:30px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.role:hover{
+    background:#d8eef7;
+}
+
+.icon{
+    width:22px;
+}
+
+.role span{
+    font-size:20px;
+    color:#2c5d7c;
+    font-weight:bold;
+}
+
+/* 🔷 LINKS */
+.links{
+    position:absolute;
+    bottom:25px;
+    right:35px;
+    display:flex;
+    gap:25px;
+}
+
+.link-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+}
+
+.link-item img{
+    width:16px;
+}
+
+.link-item span{
+    color:#2c5d7c;
+    font-size:16px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- 🔷 HEADER -->
+
+<div class="topbar">
+
+<!-- 🔥 LOGO -->
+<div class="header-logo">
+    <img src="../images/diab muaazir.svg">
+</div>
+
+<!-- 🌐 LANGUAGE -->
+<div class="lang-switcher">
+    <img src="../images/language.svg" id="langToggle" class="lang-icon">
+
+    <div class="lang-dropdown" id="langDropdown">
+        <div class="lang-option" data-lang="en">🇬🇧 English</div>
+        <div class="lang-option" data-lang="ar">🇸🇦 العربية</div>
+    </div>
+</div>
+
+</div>
+
+<!-- 🔷 ROLES -->
+
+<div class="roles">
+
+<div class="role" onclick="goToDoctor()">
+    <img src="../images/profile.png" class="icon">
+    <span id="doctorText"></span>
+</div>
+
+<div class="role" onclick="goToPatient()">
+    <img src="../images/profile.png" class="icon">
+    <span id="patientText"></span>
+</div>
+
+<div class="role" onclick="goToParent()">
+    <img src="../images/profile.png" class="icon">
+    <span id="parentText"></span>
+</div>
+
+</div>
+
+<!-- 🔷 LINKS -->
+
+<div class="links">
+
+<div class="link-item" onclick="goToAbout()">
+    <img src="../images/info.svg">
+    <span id="aboutLink"></span>
+</div>
+
+<div class="link-item" onclick="goToContact()">
+    <img src="../images/phone.svg">
+    <span id="contactLink"></span>
+</div>
+
+</div>
+
+<script>
+
+/* 🌐 DROPDOWN */
+(function(){
+  const toggle = document.getElementById("langToggle");
+  const dropdown = document.getElementById("langDropdown");
+
+  toggle.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    dropdown.classList.toggle("active");
+  });
+
+  document.addEventListener("click",()=>{
+    dropdown.classList.remove("active");
+  });
+})();
+
+/* 🌐 CHANGE LANGUAGE */
+document.querySelectorAll(".lang-option").forEach(option=>{
+  option.addEventListener("click",()=>{
+    const lang = option.dataset.lang;
+    localStorage.setItem("lang",lang);
+    location.reload();
+  });
+});
+
+/* 🌐 CURRENT LANGUAGE */
+let lang = localStorage.getItem("lang") || "en";
+
+/* 🔥 TRANSLATIONS */
+const translations = {
+    en:{
+        doctor:"Doctor",
+        patient:"Patient",
+        parent:"Parent",
+        about:"About us",
+        contact:"Contact us"
+    },
+    ar:{
+        doctor:"طبيب",
+        patient:"مريض",
+        parent:"ولي الأمر",
+        about:"من نحن",
+        contact:"تواصل معنا"
+    }
+};
+
+/* APPLY */
+document.getElementById("doctorText").innerText = translations[lang].doctor;
+document.getElementById("patientText").innerText = translations[lang].patient;
+document.getElementById("parentText").innerText = translations[lang].parent;
+document.getElementById("aboutLink").innerText = translations[lang].about;
+document.getElementById("contactLink").innerText = translations[lang].contact;
+
+/* DIRECTION */
+document.body.style.direction = (lang === "ar") ? "rtl" : "ltr";
+
+/* NAVIGATION */
+function goToDoctor(){
+    window.location.href = "patients.html";
+}
+
+function goToPatient(){
+    window.location.href = "../patient/patient.html";
+}
+
+function goToParent(){
+    window.location.href = "../patient/patient.html";
+}
+
+function goToAbout(){
+    window.location.href = "../about.html";
+}
+
+function goToContact(){
+    window.location.href = "../contact.html";
+}
+
+</script>
+
+</body>
+</html>

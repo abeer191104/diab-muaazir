@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+  <div class="form-container">
+
+    <img class="auth-logo" src="images/diab muaazir.svg" alt="الشعار">
+
+    <h2>تسجيل الدخول</h2>
+
+    <form id="loginForm" novalidate>
+
+      <!-- Email -->
+      <div class="input-group">
+        <input
+          type="email"
+          id="loginEmail"
+          name="email"
+          placeholder="البريد الإلكتروني"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="input-group">
+        <input
+          type="password"
+          id="loginPassword"
+          name="password"
+          placeholder="كلمة المرور"
+          required
+        />
+      </div>
+
+      <!-- Error message -->
+      <small id="loginError" class="error-message"></small>
+
+      <!-- Button -->
+      <button type="submit" class="btn">تسجيل الدخول</button>
+
+      <!-- Link -->
+      <p class="form-link">
+        لا تملك حسابًا؟
+        <a href="register-ar.html">إنشاء حساب</a>
+      </p>
+        <a href="index-ar.html" class="back-link" >← العودة</a>
+
+    </form>
+
+<div id="otpSection" style="display:none; margin-top:20px;">
+  <input id="otpInput" placeholder="Enter verification code" />
+  <button id="verifyOtp">Verify Code</button>
+</div>
+  </div>
+
+  <script type="module" src="js/script.js"></script>
+</body>
+</html>

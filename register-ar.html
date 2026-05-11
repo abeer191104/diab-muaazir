@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إنشاء حساب</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+  <div class="form-container">
+
+    <img class="auth-logo" src="images/diab muaazir.svg" alt="الشعار">
+
+    <h2>التسجيل</h2>
+
+    <form id="registerForm" novalidate>
+
+      <div class="row">
+        <input id="firstName" name="firstName" type="text" placeholder="الاسم الأول" required>
+        <span id="firstNameError" class="error-msg"></span>
+        <input id="lastName" name="lastName" type="text" placeholder="اسم العائلة" required>
+        <span id="lastNameError" class="error-msg"></span>
+      </div>
+
+<div class="input-group">
+  <input id="email" name="email" type="email" placeholder="البريد الإلكتروني" required>
+  <small id="emailError" class="error-message"></small>
+</div>
+      <div class="input-group">
+        <input type="password" id="password" name="password" placeholder="كلمة المرور" required />
+        <small id="passwordError" class="error-message"></small>
+      </div>
+      
+      <div id="passwordStrengthBar" style="
+  width: 100%;
+  height: 6px;
+  background: #eee;
+  border-radius: 6px;
+  margin-top: 6px;
+  overflow: hidden;
+">
+  <div id="passwordStrengthFill" style="
+    height: 100%;
+    width: 0%;
+    background: red;
+    transition: width 0.3s ease;
+  "></div>
+</div>
+
+      <div class="input-group">
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="تأكيد كلمة المرور" required />
+        <small id="confirmPasswordError" class="error-message"></small>
+      </div>
+
+      <div class="input-group">
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          inputmode="numeric"
+          maxlength="10"
+          placeholder="05XXXXXXXX"
+          required
+        />
+        <small id="phoneError" class="error-message"></small>
+      </div>
+
+      <div class="input-group">
+        <input type="date" name="dob" id="dob" required>
+        <small id="dobError" class="error-message"></small>
+      </div>
+
+      <div class="input-group">
+        <input id="address" name="address" type="text" placeholder="العنوان" required>
+        <small id="addressError" class="error-message"></small>
+      </div>
+
+      <div class="gender-selection">
+        <p>اختر الجنس:</p>
+
+        <label class="gender-option">
+          <input type="radio" name="gender" value="male" required>
+          <span>ذكر</span>
+        </label>
+
+        <label class="gender-option">
+          <input type="radio" name="gender" value="female" required>
+          <span>أنثى</span>
+        </label>
+
+        <small id="genderError" class="error-message"></small>
+      </div>
+
+      <div class="role-selection">
+        <p>اختر الدور:</p>
+
+        <label class="role-option">
+          <input type="radio" name="role" value="doctor" required>
+          <span>طبيب</span>
+        </label>
+
+        <label class="role-option">
+          <input type="radio" name="role" value="patient" required>
+          <span>مريض</span>
+        </label>
+
+        <label class="role-option">
+          <input type="radio" name="role" value="parent" required>
+          <span>ولي أمر</span>
+        </label>
+
+        <small id="roleError" class="error-message"></small>
+      </div>
+
+      <div id="doctorField" class="hidden">
+        <label>رفع ترخيص الطبيب:</label>
+        <input id="doctorLicense" type="file" />
+        <small id="doctorLicenseError" class="error-message"></small>
+      </div>
+
+      <button type="submit" class="btn">تسجيل</button>
+
+      <p class="form-link">
+        لديك حساب بالفعل؟
+        <a href="login-ar.html">تسجيل الدخول</a>
+      </p>
+        <a href="index-ar.html" class="back-link" >← العودة</a>
+
+    </form>
+  </div>
+  
+<script type="module" src="js/script.js"></script>
+</body>
+</html>
