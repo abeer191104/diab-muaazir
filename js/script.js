@@ -10,9 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  signOut,
-  RecaptchaVerifier,
-  signInWithPhoneNumber
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
@@ -671,7 +669,7 @@ await setDoc(doc(db, collectionName, firebaseUser.uid), {
     role: role,
     gender: gender,
     dob: dobInput ? dobInput.value : "",
-    phone: phoneInput ? "+966" + phoneInput.value.trim().substring(1) : "",
+    phone: phoneInput ? phoneInput.value.trim() : "",
     address: addressInput ? addressInput.value.trim() : "",
     ...(role === "Doctor" && { certificateName }),
     createdAt: new Date()
@@ -1896,13 +1894,6 @@ function redirectByRole(role) {
     else window.location.href = "patient/patient.html";
   }
 }
-window.recaptchaVerifier = new RecaptchaVerifier(
-  auth,
-  "recaptcha-container",
-  {
-    size: "invisible"
-  }
-);
 
   const loginForm = $("loginForm");
   if (!loginForm) return;
@@ -1989,33 +1980,18 @@ localStorage.setItem("tempUser", JSON.stringify({
   age: userData.age
 }));
 
-const phoneNumber = userData.phone;
+const otp = Math.floor(100000 + Math.random() * 900000);
 
-const confirmationResult =
-  await signInWithPhoneNumber(
-    auth,
-    phoneNumber,
-    window.recaptchaVerifier
-  );
+localStorage.setItem("login_otp", otp.toString());
+localStorage.setItem("login_otp_expiry", Date.now() + 2 * 60 * 1000);
+console.log("DEV OTP:", otp); // visible only to developer
 
-  sessionStorage.setItem(
-  "verificationId",
-  confirmationResult.verificationId
+alert(
+  isArabic
+    ? "تم إرسال رمز التحقق إلى بريدك الإلكتروني"
+    : "OTP has been sent to your email"
 );
-
-window.confirmationResult = confirmationResult;
-
-localStorage.setItem(
-  "tempUser",
-  JSON.stringify({
-    uid: firebaseUser.uid,
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
-    role: role,
-    age: userData.age
-  })
-);
+console.log("DEV OTP:", otp); // visible only to developer
 
 window.location.href = "otp.html";
 
