@@ -2302,7 +2302,7 @@ if (logoutBtn) {
     await signOut(auth);
 
     window.location.href = isArabic
-      ? "../ar/index-ar.html"
+      ? "../../index-ar.html"
       : "../index.html";
   });
 }
