@@ -1738,6 +1738,21 @@ document.querySelectorAll(".lang-option").forEach(option => {
     window.location.href = target;
   });
 });
+
+window.openfindpump = function () {
+
+  const currentLang =
+    document.documentElement.lang || "en";
+
+  localStorage.setItem("lang", currentLang);
+
+  if (currentLang === "ar") {
+    window.location.href = "../../find-my-pump.html";
+  } else {
+    window.location.href = "../find-my-pump.html";
+  }
+};
+
 const calculateBtn2 = document.getElementById("calculateBtn2");
 const carbInput = document.getElementById("carbInput");
 const insulinOutput = document.getElementById("insulinOutput");
