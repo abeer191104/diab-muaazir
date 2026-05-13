@@ -1007,6 +1007,32 @@ if (analyzeMealBtn) {
 
     const mealText =
       document.getElementById("mealText").value.trim();
+      function translateArabicFood(text){
+
+  const map = {
+    "برجر":"burger",
+    "برجر دجاج":"chicken burger",
+    "رز":"rice",
+    "خبز":"bread",
+    "موز":"banana",
+    "تفاح":"apple",
+    "بيتزا":"pizza",
+    "شاورما":"shawarma",
+    "كولا":"cola",
+    "عصير":"juice"
+  };
+
+  let result = text;
+
+  for(const ar in map){
+    result = result.replaceAll(ar, map[ar]);
+  }
+
+  return result;
+}
+
+const translatedMeal =
+  translateArabicFood(mealText);
 
     const resultBox =
       document.getElementById("mealAnalysisResult");
@@ -1018,7 +1044,7 @@ if (analyzeMealBtn) {
     try {
 
       const response = await fetch(
-        `https://api.calorieninjas.com/v1/nutrition?query=${encodeURIComponent(mealText)}`,
+        `https://api.calorieninjas.com/v1/nutrition?query=${encodeURIComponent(translatedMeal)}`,
         {
           method: "GET",
 
