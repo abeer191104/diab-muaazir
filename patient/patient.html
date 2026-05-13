@@ -156,7 +156,7 @@
       </div>
 
       <!-- Actions -->
-  <div class="card action-card">
+  <div class="card action-card" onclick="openfindpump()">
   <h3>Find My Pump</h3>
 </div>
 
@@ -196,7 +196,7 @@ if(!user){
 
   function logout(){
   localStorage.removeItem("currentUser");
-  window.location.href = "../login.html";
+  window.location.href = "../index.html";
 }
 
 function goToNotifications(){
