@@ -336,7 +336,7 @@ body[dir="rtl"] .top-time{
 
     <!-- Found Location Toast -->
     <div id="foundToastV2" class="toast toast-success">
-        <button class="dismiss-btn" onclick="hideToast('lostToastV2')" id="dismissBtn">Dismiss</button>
+    <button class="toast-close"onclick="hideToast('foundToastV2')">×</button>
         <div class="toast-icon"><div class="pulsing-pin-icon"></div></div>
         <div class="toast-content">
             <div class="toast-title-v2" id="foundTitle">Pump Found</div>
@@ -346,7 +346,10 @@ body[dir="rtl"] .top-time{
                 <b id="timeLabel">Time:</b> <span id="fTime">--</span>
                 <b id="dateLabel">Date:</b> <span id="fDate">--</span>
             </div>
-            <button class="primary-btn" onclick="focusPump()" id="showMapBtn" style="height:44px; border-radius:14px; font-size: 13px;">Show on Map</button>
+            <div class="toast-actions">
+
+    <button class="primary-btn"onclick="focusPump()"id="showMapBtn">Show on Map</button>
+    <button class="dismiss-btn"onclick="hideToast('foundToastV2')"id="dismissFoundBtn">Dismiss</button></div>
         </div>
     </div>
 </div>
@@ -688,8 +691,8 @@ function applyLanguage(){
     document.getElementById("lostMsg").innerText = t[lang].connectionLostMsg;
 
     document.getElementById("locateBtn").innerText = t[lang].locateNow;
-    document.getElementById("dismissBtn").innerText = t[lang].dismiss;
-
+    document.getElementById("dismissBtn").innerText =t[lang].dismiss;
+    document.getElementById("dismissFoundBtn").innerText =t[lang].dismiss;
     document.getElementById("foundTitle").innerText = t[lang].pumpFound;
 
     document.getElementById("placeLabel").innerText = t[lang].place;
