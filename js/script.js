@@ -1057,15 +1057,6 @@ const translatedMeal =
 
       const data = await response.json();
 
-      localStorage.setItem(
-  "login_otp",
-  data.otp
-);
-
-localStorage.setItem(
-  "login_otp_expiry",
-  Date.now() + 2 * 60 * 1000
-);
 
       console.log(data);
 
@@ -2038,17 +2029,28 @@ sessionStorage.setItem(
 );
 
 const response = await fetch("/api/send-otp", {
-
   method: "POST",
-
   headers: {
     "Content-Type": "application/json"
   },
-
   body: JSON.stringify({
     email: userData.email
   })
 });
+
+const data = await response.json();
+
+console.log(data);
+
+      localStorage.setItem(
+  "login_otp",
+  data.otp
+);
+
+localStorage.setItem(
+  "login_otp_expiry",
+  Date.now() + 2 * 60 * 1000
+);
 
 alert(
   isArabic
