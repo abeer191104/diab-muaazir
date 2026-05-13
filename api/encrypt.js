@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -17,42 +17,47 @@ function encrypt(text) {
     iv
   );
 
-  let encrypted = cipher.update(text, "utf8", "hex");
+  let encrypted = cipher.update(
+    text,
+    "utf8",
+    "hex"
+  );
 
   encrypted += cipher.final("hex");
 
-  const authTag = cipher.getAuthTag();
+  const tag = cipher.getAuthTag();
 
   return JSON.stringify({
     iv: iv.toString("hex"),
     content: encrypted,
-    tag: authTag.toString("hex")
+    tag: tag.toString("hex")
   });
 }
 
-module.exports = async (req, res) => {
-
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-  }
+export default async function handler(req, res) {
 
   try {
 
+    if (!SECRET_KEY) {
+      throw new Error("SECRET_KEY missing");
+    }
+
+    const body = req.body || {};
+
     const encrypted = encrypt(
-      JSON.stringify(req.body)
+      JSON.stringify(body)
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       encrypted
     });
 
   } catch (err) {
 
-    res.status(500).json({
+    console.error(err);
+
+    return res.status(500).json({
       error: err.message
     });
-
   }
-};
+}
