@@ -13,6 +13,14 @@ const tempUser =
 const email =
   sessionStorage.getItem("otp_email");
 
+const storedOtp =
+  localStorage.getItem("login_otp");
+
+const expiry =
+  parseInt(
+    localStorage.getItem("login_otp_expiry")
+  );
+
 if (!tempUser || !email) {
 
   window.location.href = "login.html";
@@ -32,34 +40,17 @@ verifyBtn.addEventListener("click", async () => {
     return;
   }
 
-  try {
+  if (Date.now() > expiry) {
 
-    const response = await fetch(
-      "/api/verify-otp",
-      {
+  errorEl.textContent = "OTP expired";
+  return;
+}
 
-        method: "POST",
+if (otp !== storedOtp) {
 
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          email,
-          otp
-        })
-      }
-    );
-
-    const result = await response.json();
-
-    if (!result.success) {
-
-      errorEl.textContent =
-        result.error || "Invalid OTP";
-
-      return;
-    }
+  errorEl.textContent = "Incorrect OTP";
+  return;
+}
 
     /* SUCCESS LOGIN */
 
@@ -69,7 +60,9 @@ verifyBtn.addEventListener("click", async () => {
     );
 
     localStorage.removeItem("tempUser");
-
+    localStorage.removeItem("login_otp");
+    localStorage.removeItem("login_otp_expiry");
+    
     sessionStorage.removeItem("otp_email");
 
     if (tempUser.role === "Doctor") {
@@ -83,11 +76,5 @@ verifyBtn.addEventListener("click", async () => {
         "patient/patient.html";
     }
 
-  } catch (err) {
-
-    console.error(err);
-
-    errorEl.textContent =
-      "Verification failed";
   }
-});
+);
