@@ -485,7 +485,9 @@ function addActivity(title){
 
 function showToast(id){ document.getElementById(id).classList.add('show'); }
 function hideToast(id){ document.getElementById(id).classList.remove('show'); }
+window.hideToast = hideToast;
 
+    
 function updateConnectionUI(bt,nb,gps){
     document.getElementById("btStatus").className = `status-item ${bt==='Connected'?'state-active':'state-off'}`;
     document.getElementById("btVal").innerText = bt;
