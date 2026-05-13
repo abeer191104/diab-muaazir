@@ -1,67 +1,93 @@
-const otpInput = document.getElementById("otpInput");
-const verifyBtn = document.getElementById("verifyBtn");
-const errorEl = document.getElementById("error");
-const timerEl = document.getElementById("timer");
+const otpInput =
+  document.getElementById("otpInput");
 
-// 🔥 Load stored data
-const storedOtp = localStorage.getItem("login_otp");
-const expiry = parseInt(localStorage.getItem("login_otp_expiry"));
-const tempUser = JSON.parse(localStorage.getItem("tempUser"));
+const verifyBtn =
+  document.getElementById("verifyBtn");
 
-// 🚫 Safety checks
-if (!storedOtp || !expiry || !tempUser) {
+const errorEl =
+  document.getElementById("error");
+
+const tempUser =
+  JSON.parse(localStorage.getItem("tempUser"));
+
+const email =
+  sessionStorage.getItem("otp_email");
+
+if (!tempUser || !email) {
+
   window.location.href = "login.html";
 }
 
-// ===============================
-// ⏳ TIMER
-// ===============================
-function updateTimer() {
-  const remaining = expiry - Date.now();
+/* =========================
+   VERIFY OTP
+========================= */
 
-  if (remaining <= 0) {
-    timerEl.textContent = "OTP expired";
-    localStorage.removeItem("login_otp");
+verifyBtn.addEventListener("click", async () => {
+
+  const otp = otpInput.value.trim();
+
+  if (!otp) {
+
+    errorEl.textContent = "Enter OTP";
     return;
   }
 
-  const seconds = Math.floor(remaining / 1000);
-  timerEl.textContent = "Expires in: " + seconds + "s";
-}
+  try {
 
-setInterval(updateTimer, 1000);
-updateTimer();
+    const response = await fetch(
+      "/api/verify-otp",
+      {
 
-// ===============================
-// ✅ VERIFY OTP
-// ===============================
-verifyBtn.addEventListener("click", () => {
-  const entered = otpInput.value.trim();
+        method: "POST",
 
-  // expired check
-  if (Date.now() > expiry) {
-    errorEl.textContent = "OTP expired. Please login again.";
-    return;
-  }
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-  // match check
-  if (entered !== storedOtp) {
-    errorEl.textContent = "Incorrect OTP";
-    return;
-  }
+        body: JSON.stringify({
+          email,
+          otp
+        })
+      }
+    );
 
-  // ✅ SUCCESS → promote tempUser → currentUser
-  localStorage.setItem("currentUser", JSON.stringify(tempUser));
+    const result = await response.json();
 
-  // cleanup
-  localStorage.removeItem("tempUser");
-  localStorage.removeItem("login_otp");
-  localStorage.removeItem("login_otp_expiry");
+    if (!result.success) {
 
-  // redirect by role
-  if (tempUser.role === "Doctor") {
-    window.location.href = "doctor/patients.html";
-  } else {
-    window.location.href = "patient/patient.html";
+      errorEl.textContent =
+        result.error || "Invalid OTP";
+
+      return;
+    }
+
+    /* SUCCESS LOGIN */
+
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(tempUser)
+    );
+
+    localStorage.removeItem("tempUser");
+
+    sessionStorage.removeItem("otp_email");
+
+    if (tempUser.role === "Doctor") {
+
+      window.location.href =
+        "doctor/patients.html";
+
+    } else {
+
+      window.location.href =
+        "patient/patient.html";
+    }
+
+  } catch (err) {
+
+    console.error(err);
+
+    errorEl.textContent =
+      "Verification failed";
   }
 });
