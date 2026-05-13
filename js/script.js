@@ -1057,6 +1057,16 @@ const translatedMeal =
 
       const data = await response.json();
 
+      localStorage.setItem(
+  "login_otp",
+  data.otp
+);
+
+localStorage.setItem(
+  "login_otp_expiry",
+  Date.now() + 2 * 60 * 1000
+);
+
       console.log(data);
 
       if (!data.items || data.items.length === 0) {
