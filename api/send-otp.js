@@ -38,7 +38,7 @@ export default async function handler(req, res) {
             process.env.EMAILJS_TEMPLATE_ID,
             {
                 to_email: email,
-                otp: otp
+                passcode: otp
             },
             {
                 publicKey: process.env.EMAILJS_PUBLIC_KEY,
