@@ -585,92 +585,36 @@ localStorage.setItem(STORAGE_KEY, encrypted);
     addActivity(t[lang].secured)
 }
 
-const SECRET_KEY = "MuaazirSecureKey2026";
-
-/* =========================
-   ENCRYPTION
-========================= */
-
-async function getKey() {
-
-  const enc = new TextEncoder();
-
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(SECRET_KEY),
-    { name: "PBKDF2" },
-    false,
-    ["deriveKey"]
-  );
-
-  return crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: enc.encode("muaazir-salt"),
-      iterations: 100000,
-      hash: "SHA-256"
-    },
-    keyMaterial,
-    {
-      name: "AES-GCM",
-      length: 256
-    },
-    false,
-    ["encrypt", "decrypt"]
-  );
-}
-
-/* =========================
-   ENCRYPT DATA
-========================= */
-
 async function encryptData(data) {
 
-  const key = await getKey();
-
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-
-  const encoded = new TextEncoder().encode(
-    JSON.stringify(data)
-  );
-
-  const encrypted = await crypto.subtle.encrypt(
-    {
-      name: "AES-GCM",
-      iv
+  const response = await fetch("/api/encrypt", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
     },
-    key,
-    encoded
-  );
-
-  return JSON.stringify({
-    iv: Array.from(iv),
-    data: Array.from(new Uint8Array(encrypted))
+    body: JSON.stringify(data)
   });
-}
 
-/* =========================
-   DECRYPT DATA
-========================= */
+  const result = await response.json();
+
+  return result.encrypted;
+}
 
 async function decryptData(encryptedText) {
 
-  const parsed = JSON.parse(encryptedText);
-
-  const key = await getKey();
-
-  const decrypted = await crypto.subtle.decrypt(
-    {
-      name: "AES-GCM",
-      iv: new Uint8Array(parsed.iv)
+  const response = await fetch("/api/decrypt", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
     },
-    key,
-    new Uint8Array(parsed.data)
-  );
+    body: JSON.stringify({
+      encrypted: encryptedText
+    })
+  });
 
-  return JSON.parse(
-    new TextDecoder().decode(decrypted)
-  );
+  const result = await response.json();
+
+  return result.decrypted;
 }
 
 function applyLanguage(){
