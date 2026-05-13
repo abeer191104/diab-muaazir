@@ -1043,7 +1043,7 @@ const translatedMeal =
 
     try {
 
-      const response = await fetch(
+      const response =  await fetch(
         `https://api.calorieninjas.com/v1/nutrition?query=${encodeURIComponent(translatedMeal)}`,
         {
           method: "GET",
@@ -1053,6 +1053,7 @@ const translatedMeal =
           }
         }
       );
+
 
       const data = await response.json();
 
@@ -2021,18 +2022,29 @@ localStorage.setItem("tempUser", JSON.stringify({
   age: userData.age
 }));
 
-const otp = Math.floor(100000 + Math.random() * 900000);
+sessionStorage.setItem(
+  "otp_email",
+  userData.email
+);
 
-localStorage.setItem("login_otp", otp.toString());
-localStorage.setItem("login_otp_expiry", Date.now() + 2 * 60 * 1000);
-console.log("DEV OTP:", otp); // visible only to developer
+await fetch("/api/send-otp", {
+
+  method: "POST",
+
+  headers: {
+    "Content-Type": "application/json"
+  },
+
+  body: JSON.stringify({
+    email: userData.email
+  })
+});
 
 alert(
   isArabic
     ? "تم إرسال رمز التحقق إلى بريدك الإلكتروني"
     : "OTP has been sent to your email"
 );
-console.log("DEV OTP:", otp); // visible only to developer
 
 window.location.href = "otp.html";
 
@@ -2336,9 +2348,6 @@ if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("tempUser");    
-    localStorage.removeItem("login_otp");    
-    localStorage.removeItem("login_otp_expiry");
-
 
     await signOut(auth);
 
