@@ -2027,7 +2027,7 @@ sessionStorage.setItem(
   userData.email
 );
 
-await fetch("/api/send-otp", {
+const response = await fetch("/api/send-otp", {
 
   method: "POST",
 
