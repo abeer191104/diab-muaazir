@@ -172,33 +172,38 @@
     <!-- PAGE 3 -->
     <section id="carbResult" class="carb-page">
 
-      <h2>قائمة حساب الكربوهيدرات</h2>
+  <h2>قائمة حساب الكربوهيدرات</h2>
 
-      <p class="carb-description2">
-        أدخل الأطعمة التي تناولتها ووزنها بالجرام لحساب إجمالي الكربوهيدرات وجرعة الإنسولين المدخلة .
-      </p>
+  <p class="carb-description2">
+    أدخل الوجبة التي تناولتها ليتم تحليل الكربوهيدرات والسعرات الغذائية وحساب جرعة الإنسولين المتوقعة.
+  </p>
 
-      <textarea id="foodInput" placeholder="مثال:
-رز 200
-موز
-خبز 2"></textarea>
+  <div class="meal-ai-box">
 
-      <div id="suggestions" class="suggestions"></div>
+    <h3>تحليل الوجبات الذكي</h3>
 
-      <button type="button" class="main-btn" id="calcBtn">
-        احسب
-      </button>
+    <textarea
+      id="mealText"
+      placeholder="مثال: برجر دجاج ومشروب غازي"
+    ></textarea>
 
-      <p id="result"></p>
+    <button id="analyzeMealBtn">
+      تحليل الوجبة
+    </button>
 
-      <div class="dose-result">
-        جرعة الإنسولين:
-        <span id="insulinOutput3">--</span>
-      </div>
+    <div id="mealAnalysisResult"></div>
 
-      <button type="button" id="backBtn2">رجوع</button>
+  </div>
 
-    </section>
+  <div id="suggestions" class="suggestions"></div>
+
+  <p id="result"></p>
+
+  <button type="button" id="backBtn2">
+    رجوع
+  </button>
+
+</section>
 
   </div>
 
