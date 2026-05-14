@@ -1836,7 +1836,7 @@ if (notificationBtn) {
     localStorage.setItem("dm_notifications_seen", "true");
     updateNotificationBadge();
     window.location.href = isArabic
-      ? "../notifications-ar.html"
+      ? "../../notifications-ar.html"
       : "../notifications.html";
   });
 }
