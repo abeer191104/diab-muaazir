@@ -437,7 +437,7 @@ function locatePatient(patient){
     "selectedPatient",
     JSON.stringify(patient)
   );
-
+localStorage.setItem("pumpBackPage", "doctor");
   window.location.href = "../find-my-pump.html";
 }
   
