@@ -2196,7 +2196,7 @@ console.log(data);
 
 localStorage.setItem(
   "login_otp_expiry",
-  Date.now() + 2 * 60 * 1000
+  Date.now() + 5 * 60 * 1000
 );
 
 alert(
