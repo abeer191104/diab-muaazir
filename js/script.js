@@ -698,6 +698,8 @@ await setDoc(doc(db, collectionName, firebaseUser.uid), {
 }});
 })();
 
+  let lastAlertEmailTime = 0;
+  
   (async function listenToPump() {
 
   const pumpRef = doc(db, "pump_live_data", "live");
@@ -838,9 +840,49 @@ if (savedUser && savedUser.uid && savedUser.role === "Patient") {
           `High glucose detected (${glucose})`,
           `تم اكتشاف ارتفاع في السكر (${glucose})`,
            time.toISOString()
-
         );
       }
+
+      const now = Date.now();
+
+const fifteenMinutes = 15 * 60 * 1000;
+
+if (
+  savedUser &&
+  savedUser.email &&
+  now - lastAlertEmailTime > fifteenMinutes
+) {
+
+  try {
+
+    await fetch("/api/send-alert", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        email: savedUser.email,
+        glucose,
+        status
+      })
+    });
+
+    lastAlertEmailTime = now;
+
+    console.log("Alert email sent");
+
+  } catch (err) {
+
+    console.error(
+      "Failed to send alert email",
+      err
+    );
+  }
+}
+      
     }
 
     if (status === "normal") {
