@@ -399,10 +399,20 @@ alerts.forEach(a => {
 
   contactBtn.onclick = () => contactPatient(a);
 
-  // ✅ NOW safe to append
   div.appendChild(contactBtn);
 
-  // ✅ add to page
+  let locationBtn = document.createElement("div");
+locationBtn.className = "btn";
+
+locationBtn.innerHTML = `
+  <img src="../images/location.svg">
+  ${t[lang].locationBtn}
+`;
+
+locationBtn.onclick = () => locatePatient(a);
+
+div.appendChild(locationBtn);
+  
   box.appendChild(div);
 
   let line = document.createElement("div");
@@ -414,7 +424,6 @@ alerts.forEach(a => {
 render();
 setInterval(render, 5000);
 
-/* 🔗 ربط الشات */
 function contactPatient(patient){
 
   localStorage.setItem("selectedPatient", JSON.stringify(patient));
@@ -422,8 +431,17 @@ function contactPatient(patient){
   window.location.href = "contact_patient.html";
 }
 
-/* 🔗 NAVIGATION */
-function goTo(page) {
+function locatePatient(patient){
+
+  localStorage.setItem(
+    "selectedPatient",
+    JSON.stringify(patient)
+  );
+
+  window.location.href = "../find-my-pump.html";
+}
+  
+  function goTo(page) {
   if (lang === "ar") {
     if (page === "../feedback.html") page = "../feedback-ar.html";
     if (page === "../about.html") page = "../about-us-ar.html";
@@ -434,6 +452,7 @@ function goTo(page) {
   window.location.href = page;
 }
 window.contactPatient = contactPatient;
+window.locatePatient = locatePatient;
 window.toggleSidebar = toggleSidebar;
 window.goTo = goTo;
 window.toggleLang = toggleLang;
