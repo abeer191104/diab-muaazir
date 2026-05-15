@@ -733,6 +733,11 @@ if (!(time instanceof Date) || isNaN(time)) {
 
     if (!data.cgm || !data.pump) return;
 
+    const battery = data.pump.batteryPercent;
+
+const disconnected =
+  data.pump.connected === false;
+
     const glucose = data.cgm.glucoseValue;
 
 const currentHour = time.getHours();
@@ -884,6 +889,105 @@ if (
 }
       
     }
+
+// DEVICE ALERT EMAILS
+
+const now = Date.now();
+
+const tenMinutes = 10 * 60 * 1000;
+
+// LOW BATTERY ALERT
+
+const lastBatteryAlert =
+  localStorage.getItem("lastBatteryAlert") || 0;
+
+if (
+  battery <= 20 &&
+  savedUser &&
+  savedUser.email &&
+  now - lastBatteryAlert > tenMinutes
+) {
+
+  try {
+
+    await fetch("/api/send-device-alert", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        email: savedUser.email,
+        type: "battery",
+        battery: battery
+      })
+    });
+
+    localStorage.setItem(
+      "lastBatteryAlert",
+      now
+    );
+
+    console.log(
+      "Low battery email sent"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Battery email failed",
+      err
+    );
+  }
+}
+
+// DEVICE DISCONNECTED ALERT
+
+const lastDisconnectAlert =
+  localStorage.getItem("lastDisconnectAlert") || 0;
+
+if (
+  disconnected &&
+  savedUser &&
+  savedUser.email &&
+  now - lastDisconnectAlert > tenMinutes
+) {
+
+  try {
+
+    await fetch("/api/send-device-alert", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        email: savedUser.email,
+        type: "disconnect"
+      })
+    });
+
+    localStorage.setItem(
+      "lastDisconnectAlert",
+      now
+    );
+
+    console.log(
+      "Disconnect email sent"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Disconnect email failed",
+      err
+    );
+  }
+}
 
     if (status === "normal") {
       lastStatus = null;
