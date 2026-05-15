@@ -573,6 +573,7 @@ showError(doctorLicense, doctorLicenseError,
 
    if (passwordInput) {   
   const password = passwordInput.value;
+  const fill = document.getElementById("passwordStrengthFill");
 
    if (!password) {
   fill.style.width = "0%";
@@ -604,7 +605,6 @@ showError(doctorLicense, doctorLicenseError,
   }
     const strength = getPasswordStrength(password);
 
-  const fill = document.getElementById("passwordStrengthFill");
   if (!fill) return;
 
   if (strength === "weak") {
@@ -706,7 +706,7 @@ await setDoc(doc(db, collectionName, firebaseUser.uid), {
 
   let lastStatus = null; // 🔥 prevents duplicate notifications
 
-  onSnapshot(pumpRef, (snapshot) => {
+  onSnapshot(pumpRef, async (snapshot) => {
     if (!snapshot.exists()) return;
 
     const data = snapshot.data();
