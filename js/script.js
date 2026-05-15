@@ -2104,6 +2104,60 @@ function redirectByRole(role) {
     loginError.classList.remove("active");
   }
 
+const forgotPasswordLink =
+  document.getElementById(
+    "forgotPasswordLink"
+  );
+
+if (forgotPasswordLink) {
+
+  forgotPasswordLink.addEventListener(
+    "click",
+    async function (e) {
+
+      e.preventDefault();
+
+      const email =
+        loginEmail.value.trim();
+
+      if (!email) {
+
+        alert(
+          isArabic
+            ? "أدخل البريد الإلكتروني أولاً"
+            : "Please enter your email first"
+        );
+
+        return;
+      }
+
+      try {
+
+        await sendPasswordResetEmail(
+          auth,
+          email
+        );
+
+        alert(
+          isArabic
+            ? "تم إرسال رابط إعادة تعيين كلمة المرور"
+            : "Password reset email sent"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          isArabic
+            ? "فشل إرسال البريد الإلكتروني"
+            : "Failed to send reset email"
+        );
+      }
+    }
+  );
+}
+  
   loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   clearLoginError();
