@@ -1520,3 +1520,20 @@ html[dir="rtl"] .cmd-inputbar input {
   margin-top: 15px;
   line-height: 1.8;
 }
+
+.forgot-password{
+  text-align:right;
+  margin-top:8px;
+}
+
+.forgot-password a{
+  color:#4678A0;
+  font-size:14px;
+  text-decoration:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.forgot-password a:hover{
+  text-decoration:underline;
+}
