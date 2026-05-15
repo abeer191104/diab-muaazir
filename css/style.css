@@ -1537,3 +1537,18 @@ html[dir="rtl"] .cmd-inputbar input {
 .forgot-password a:hover{
   text-decoration:underline;
 }
+
+.forgot-link{
+  display:block;
+  margin-top:10px;
+  text-decoration:none;
+  font-size:14px;
+}
+
+html[lang="en"] .forgot-link{
+  text-align:left;
+}
+
+html[lang="ar"] .forgot-link{
+  text-align:right;
+}
