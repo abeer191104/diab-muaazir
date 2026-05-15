@@ -657,13 +657,17 @@ function goBack(){
     const lang =
       localStorage.getItem("lang") || "en";
 
-    if(lang === "ar"){
-        window.location.href =
-          "patient/ar/patient-dashboard-ar.html";
-    } else {
-        window.location.href =
-          "patient/patient.html";
+    const source =
+      localStorage.getItem("pumpBackPage");
+
+    if(source === "doctor"){
+        window.location.href = "doctor/critical-patients.html";
+        return;
     }
+    window.location.href =
+      lang === "ar"
+      ? "patient/ar/patient-dashboard-ar.html"
+      : "patient/patient.html";
 }
 
 const backBtn =
