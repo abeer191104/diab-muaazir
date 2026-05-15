@@ -1815,6 +1815,7 @@ window.openfindpump = function () {
     document.documentElement.lang || "en";
 
   localStorage.setItem("lang", currentLang);
+  localStorage.setItem("pumpBackPage","patient");
 
   if (currentLang === "ar") {
     window.location.href = "../../find-my-pump.html";
