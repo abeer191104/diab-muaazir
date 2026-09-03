@@ -2241,11 +2241,30 @@ const response = await fetch("/api/send-otp", {
 
 const data = await response.json();
 
-console.log(data);
+console.log("========== OTP DEBUG ==========");
+console.log("API response:", data);
+console.log("data.otp:", data.otp);
 
-      localStorage.setItem(
+if (!data.otp) {
+  console.error("❌ API DID NOT RETURN OTP");
+
+  showLoginError(
+    isArabic
+      ? "لم يتم إنشاء رمز التحقق"
+      : "OTP was not generated"
+  );
+
+  return;
+}
+
+localStorage.setItem(
   "login_otp",
-  data.otp
+  String(data.otp)
+);
+
+console.log(
+  "✅ OTP SAVED:",
+  localStorage.getItem("login_otp")
 );
 
 localStorage.setItem(
